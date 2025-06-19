@@ -101,6 +101,10 @@ SELECT create_distributed_table('payment_events', 'user_id');
 
 SELECT create_reference_table('payments_merchants')
 
+COPY payment_users
+FROM PROGRAM 'curl https://raw.githubusercontent.com/pushkar72/cosmos-postgre/refs/heads/main/mod2-data/users.csv'
+WITH (FORMAT csv, HEADER true);
+
 
 
 CREATE TABLE user_events (
@@ -130,9 +134,7 @@ WHERE table_name= '' ::regclass
 
 --To inspect shard metadata for payment_events:
 
-SELECT *
-FROM pg_dist_shard
-WHERE logicalrelid = 'payment_events'::regclass
+SELECT count(*) FROM pg_dist_shard WHERE logicalrelid = 'payment_users'::regclass
 LIMIT 5;
 
 --To check shard distribution size for payment_users:
@@ -155,16 +157,28 @@ FROM pg_dist_placement AS p,
 WHERE p.groupid = n.groupid
   AND n.noderole = 'primary'
   AND shardid = (
-      SELECT get_shard_id_for_distribution_column('payment_users', 5)
+      SELECT get_shard_id_for_distribution_column('payment_users', 3545)
   );
+
+  -- user 3545
 
   -- manually rebalance
   select rebalance_table_shards('table_name');
 
-  -- monitor active query
+  -- monitor active query               
   SELECT pid, query, state
 FROM citus_stat_activity
 WHERE state != 'idle';
+
+-- long running query
+
+-- more queries
+-- https://learn.microsoft.com/en-us/azure/cosmos-db/postgresql/howto-useful-diagnostic-queries
+
+
+
+
+
 
 
 -- join & explain
@@ -182,17 +196,19 @@ SELECT undistribute_table('payment_merchants');
 SELECT create_distributed_table('payment_merchants', 'merchant_id');
 
 
+-- cross node joins are disabled
+
 -- join to show error
-SELECT name,
+SELECT event_type,
        event_id
 FROM   payment_events AS e
-       LEFT JOIN payment_merchants m
+       inner JOIN payment_merchants m
        ON e.merchant_id = m.merchant_id
 LIMIT  5;
 
 
 -- enable repartition
-set citus.reenable_partition_join to on;
+set citus.enable_repartition_joins to off;;
 
 
 -- 

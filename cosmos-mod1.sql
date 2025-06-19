@@ -10,7 +10,7 @@
 
 -- 1. Users Table
 CREATE TABLE payment_users (
-    user_id INT PRIMARY KEY,
+    user_id bigINT PRIMARY KEY,
     login TEXT,
     url TEXT,
     avatar_url TEXT
@@ -45,7 +45,15 @@ FROM public.citus_tables;
 -- ┌─────────────────────────────┐
 -- │     AFTER DISTRIBUTION      │
 -- └─────────────────────────────┘
-
+CREATE TABLE payment_events (
+    event_id bigINT ,
+    event_type_id BIGINT,
+    user_id bigINT,
+    merchant_id BIGINT ,
+    event_details TEXT,
+    created_at TIMESTAMP,
+    PRIMARY KEY (event_id,user_id)
+);
 -- Enable Citus
 CREATE EXTENSION IF NOT EXISTS citus;
 
@@ -79,7 +87,7 @@ CREATE INDEX idx_event_date ON payment_events(created_at);
 --Partition time series
 select create_time_partitions(
     table_name:='payment_events',
-    partition_interval:= '7 days',
+    partition_interval:= '5 days',
     start_at:=now()-'2 months',
     end_at:=now()+ '6 months'
 
