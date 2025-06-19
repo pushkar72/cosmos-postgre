@@ -1,0 +1,6 @@
+Citus allows you to distribute your data and queries across multiple nodes for improved performance and scalability. By default, Citus is able to execute join operations between co-located tables (tables where matching records are on the same node). However, for tables that aren't co-located, Citus needs to temporarily re-distribute the data in order to perform the join operation.
+
+When the citus.enable_repartition_joins configuration parameter is set to on, Citus is allowed to re-distribute the data as needed to perform join operations between non-co-located tables. This process is known as repartitioning. This is usually necessary when you have large tables that need to be joined on non-distribution keys. However, repartitioning can be resource-intensive, which is why it's not enabled by default.
+
+So, the command SET citus.enable_repartition_joins TO on; is telling Citus that it is allowed to re-distribute data for the purpose of performing join operations, which can allow more types of queries to be executed but may have implications for performance and resource usage.
+
