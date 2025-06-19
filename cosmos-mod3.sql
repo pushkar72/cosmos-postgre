@@ -47,8 +47,8 @@ SELECT create_extension('azure_storage');
 
 -- Register storage account
 SELECT azure_storage.account_add(
-  'goofystgdemo3u947',
-  'm6Ocy9M8yRfTPMUQI9JTsYNoRNyL1eNQQrlZglsIIkYXcjw/mF+DQxVvdvIka55zh6GryJ/S7U1A+AStZuor0A=='
+  'xx',
+  'xx'
 );
 
 -- Preview blob container contents
