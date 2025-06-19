@@ -171,6 +171,19 @@ FROM citus_stat_activity
 WHERE state != 'idle';
 
 -- long running query
+SELECT
+    pid,
+    now() - pg_stat_activity.query_start AS duration,
+    usename,
+    state,
+    query
+FROM
+    pg_stat_activity
+WHERE
+    state = 'active'
+    AND now() - pg_stat_activity.query_start > interval '5 minutes'
+ORDER BY
+    duration DESC;
 
 -- more queries
 -- https://learn.microsoft.com/en-us/azure/cosmos-db/postgresql/howto-useful-diagnostic-queries
