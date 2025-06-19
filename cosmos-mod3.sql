@@ -46,17 +46,17 @@ SELECT cron.schedule('rollup_job', '0 * * * *', $$SELECT rollup_events(now() - i
 SELECT create_extension('azure_storage');
 
 -- Register storage account
-SELECT azure_storage_add_account(
-  'mystorageaccount',
-  'myaccesskey'
+SELECT azure_storage.account_add(
+  'goofystgdemo3u947',
+  'm6Ocy9M8yRfTPMUQI9JTsYNoRNyL1eNQQrlZglsIIkYXcjw/mF+DQxVvdvIka55zh6GryJ/S7U1A+AStZuor0A=='
 );
 
 -- Preview blob container contents
-SELECT * FROM azure_storage_list('mystorageaccount', 'historicaldata');
+SELECT * FROM azure_storage_list('goofystgdemo3u947', 'images');
 
 -- Load CSV data into distributed table
 COPY payment_users FROM PROGRAM
-  'curl https://<blob-url>/users.csv' WITH CSV;
+  'curl https://goofystgdemo3u947.blob.core.windows.net/images/events.csv' WITH CSV;
 
 COPY payment_events FROM PROGRAM
-  'curl https://<blob-url>/events.csv' WITH CSV;
+  'curl https://goofystgdemo3u947.blob.core.windows.net/images/events.csv' WITH CSV;
