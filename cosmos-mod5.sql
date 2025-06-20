@@ -15,7 +15,7 @@ FROM generate_series(1, 10000) AS s(i);
 
 
 DELETE FROM employees
-WHERE id <= 5000;
+WHERE id <= 7000;
 
 
 -- check if table needs vaccum
@@ -30,7 +30,7 @@ SELECT
 FROM
     pg_stat_user_tables
 WHERE
-    relname = 'public.employees';  
+    relname = 'employees';  
 
 
 
@@ -39,7 +39,7 @@ SHOW autovacuum_vacuum_threshold;
 SHOW autovacuum_vacuum_scale_factor;
 
 
-VACUUM employees;
+VACUUM ANALYZE employees;
 
 
 VACUUM FULL employees;
