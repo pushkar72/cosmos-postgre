@@ -16,8 +16,20 @@ SET CLIENT_ENCODING TO 'utf8';
 
 SELECT COUNT(*) FROM payment_users;
 
-
-
+select name, default_strategy from pg_dist_rebalance_strategy;
+--Check Nodes Where Data Hasn't Been Distributed
+-- This query helps identify worker nodes not holding any shard data:
+SELECT nodename 
+FROM pg_dist_node 
+WHERE nodename NOT IN (
+    SELECT DISTINCT nodename
+    FROM pg_dist_placement AS placement,
+         pg_dist_node AS node
+    WHERE placement.groupid = node.groupid
+      AND node.noderole = 'primary'
+);
+SELECT name, default_strategy 
+FROM pg_dist_rebalance_strategy;
 
 
 
@@ -60,3 +72,8 @@ SELECT rebalance_table_shards('payment_users', rebalance_strategy := 'by_table_s
 --by_table_size: Use for balancing entire large tables across the cluster.
 
 --random: Only for testing purposes.
+
+-- 4. How to View Current Shard Count
+SELECT count(*) 
+FROM pg_dist_shard 
+WHERE logicalrelid = 'your_table'::regclass;
