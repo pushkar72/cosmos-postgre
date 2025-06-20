@@ -17,6 +17,8 @@
 mono_crash.*
 
 # Build results
+CosmosApp/bin/
+CosmosApp/obj/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
